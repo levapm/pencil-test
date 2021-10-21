@@ -1,12 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { NotificationService } from 'src/app/core/services/notification.service';
+import { Component, Inject, NgZone, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { FormControl, Validators, FormGroup } from '@angular/forms';
-import { Title } from '@angular/platform-browser';
-import { EMPTY, of } from 'rxjs';
-import 'rxjs/add/operator/delay';
-
 import { AuthenticationService } from '../../core/services/auth.service';
-import { NotificationService } from '../../core/services/notification.service';
+
 
 @Component({
     selector: 'app-login',
@@ -15,56 +11,24 @@ import { NotificationService } from '../../core/services/notification.service';
 })
 export class LoginComponent implements OnInit {
 
-    loginForm: FormGroup;
     loading: boolean;
 
     constructor(private router: Router,
-        private titleService: Title,
-        private notificationService: NotificationService,
-        private authenticationService: AuthenticationService) {
+        private authenticationService: AuthenticationService,
+        @Inject('LOCALSTORAGE') private localStorage: Storage) {
     }
 
     ngOnInit() {
-        this.titleService.setTitle('angular-material-template - Login');
-        this.authenticationService.logout();
-        this.createForm();
+        if (this.localStorage.getItem('currentUser')) {
+            this.router.navigate(['/dashboard']);
+        }
     }
 
-    private createForm() {
-        const savedUserEmail = localStorage.getItem('savedUserEmail');
-
-        this.loginForm = new FormGroup({
-            email: new FormControl(savedUserEmail, [Validators.required, Validators.email]),
-            password: new FormControl('', Validators.required),
-            rememberMe: new FormControl(savedUserEmail !== null)
-        });
-    }
-
-    login() {
-        const email = this.loginForm.get('email').value;
-        const password = this.loginForm.get('password').value;
-        const rememberMe = this.loginForm.get('rememberMe').value;
-
+    async loginGoogle() {
         this.loading = true;
-        this.authenticationService
-            .login(email.toLowerCase(), password)
-            .subscribe(
-                data => {
-                    if (rememberMe) {
-                        localStorage.setItem('savedUserEmail', email);
-                    } else {
-                        localStorage.removeItem('savedUserEmail');
-                    }
-                    this.router.navigate(['/']);
-                },
-                error => {
-                    this.notificationService.openSnackBar(error.error);
-                    this.loading = false;
-                }
-            );
+        await this.authenticationService.googleLogin();
+        this.loading = false;
+        this.router.navigate(['/dashboard']);
     }
 
-    resetPassword() {
-        this.router.navigate(['/auth/password-reset-request']);
-    }
 }

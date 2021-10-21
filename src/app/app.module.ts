@@ -9,6 +9,11 @@ import { CustomMaterialModule } from './custom-material/custom-material.module';
 import { AppRoutingModule } from './app-routing.module';
 import { LoggerModule } from 'ngx-logger';
 import { environment } from '../environments/environment';
+import { AngularFireModule } from '@angular/fire';
+import { AngularFireStorageModule } from '@angular/fire/storage';
+import { AngularFireAuthModule } from '@angular/fire/auth';
+import { AngularFirestoreModule } from '@angular/fire/firestore';
+
 
 @NgModule({
   declarations: [
@@ -25,7 +30,11 @@ import { environment } from '../environments/environment';
       serverLoggingUrl: `http://my-api/logs`,
       level: environment.logLevel,
       serverLogLevel: environment.serverLogLevel
-    })
+    }),
+    AngularFireModule.initializeApp(environment.firebase),
+    AngularFireAuthModule,
+    AngularFireStorageModule,
+    AngularFirestoreModule
   ],
   bootstrap: [AppComponent]
 })

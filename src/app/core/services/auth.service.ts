@@ -1,71 +1,64 @@
-import { Injectable, Inject } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { map } from 'rxjs/operators';
-import * as jwt_decode from 'jwt-decode';
-import * as moment from 'moment';
+import { Inject, Injectable } from '@angular/core';
+import * as firebase from 'firebase/app';
 import 'rxjs/add/operator/delay';
+import { BehaviorSubject, Observable } from 'rxjs';
+import { AngularFireAuth } from '@angular/fire/auth';
+import { NotificationService } from './notification.service';
 
-import { environment } from '../../../environments/environment';
-import { of, EMPTY } from 'rxjs';
+
+export interface User {
+    uid?: string;
+    provider?: string;
+    name?: string;
+    email?: string;
+}
 
 @Injectable({
     providedIn: 'root'
 })
 export class AuthenticationService {
 
-    constructor(private http: HttpClient,
+    currentUser: BehaviorSubject<User> = new BehaviorSubject({});
+    constructor(private afAuth: AngularFireAuth,
+        private notify: NotificationService,
         @Inject('LOCALSTORAGE') private localStorage: Storage) {
+
+        firebase.auth().onAuthStateChanged((user) => {
+            let newUser = {};
+            if (user) {
+                newUser = {
+                    uid: user.uid,
+                    name: user.displayName,
+                    email: user.email,
+                    provider: 'Gmail'
+                };
+                this.localStorage.setItem('currentUser', user.uid);
+            } else { this.localStorage.removeItem('currentUser'); }
+            this.setCurrentUser(newUser);
+        });
     }
 
-    login(email: string, password: string) {
-        return of(true).delay(1000)
-            .pipe(map((/*response*/) => {
-                // set token property
-                // const decodedToken = jwt_decode(response['token']);
-
-                // store email and jwt token in local storage to keep user logged in between page refreshes
-                this.localStorage.setItem('currentUser', JSON.stringify({
-                    token: 'aisdnaksjdn,axmnczm',
-                    isAdmin: true,
-                    email: 'john.doe@gmail.com',
-                    id: '12312323232',
-                    alias: 'john.doe@gmail.com'.split('@')[0],
-                    expiration: moment().add(1, 'days').toDate(),
-                    fullName: 'John Doe'
-                }));
-
-                return true;
-            }));
+    googleLogin() {
+        const provider = new firebase.auth.GoogleAuthProvider();
+        return this.oAuthLogin(provider).catch(error => {
+            this.notify.openSnackBar(error);
+        });
     }
 
-    logout(): void {
-        // clear token remove user from local storage to log user out
-        this.localStorage.removeItem('currentUser');
+    logout() {
+        return this.afAuth.auth.signOut();
     }
 
-    getCurrentUser(): any {
-        // TODO: Enable after implementation
-        // return JSON.parse(this.localStorage.getItem('currentUser'));
-        return {
-            token: 'aisdnaksjdn,axmnczm',
-            isAdmin: true,
-            email: 'john.doe@gmail.com',
-            id: '12312323232',
-            alias: 'john.doe@gmail.com'.split('@')[0],
-            expiration: moment().add(1, 'days').toDate(),
-            fullName: 'John Doe'
-        };
+    private oAuthLogin(provider) {
+        return this.afAuth.auth.signInWithPopup(provider);
     }
 
-    passwordResetRequest(email: string) {
-        return of(true).delay(1000);
+    getCurrentUser(): Observable<User> {
+        return this.currentUser.asObservable();
     }
 
-    changePassword(email: string, currentPwd: string, newPwd: string) {
-        return of(true).delay(1000);
+    private setCurrentUser(user: User): void {
+        this.currentUser.next(user);
     }
 
-    passwordReset(email: string, token: string, password: string, confirmPassword: string): any {
-        return of(true).delay(1000);
-    }
 }

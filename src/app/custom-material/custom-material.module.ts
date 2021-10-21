@@ -10,8 +10,10 @@ import {
   MatSelectModule, MatPaginatorModule, MatChipsModule, MatButtonToggleModule,
   MatSlideToggleModule, MatBadgeModule, MatCheckboxModule, MatExpansionModule, MatSortModule
 } from '@angular/material';
-import { SelectCheckAllComponent } from './select-check-all/select-check-all.component';
 import { DragDropModule } from '@angular/cdk/drag-drop';
+import { MatSliderModule } from '@angular/material/slider';
+
+
 
 export const MY_FORMATS = {
   parse: {
@@ -35,7 +37,7 @@ export const MY_FORMATS = {
     MatAutocompleteModule, MatTableModule, MatDialogModule, MatTabsModule,
     MatTooltipModule, MatSelectModule, MatPaginatorModule, MatChipsModule,
     MatButtonToggleModule, MatSlideToggleModule, MatBadgeModule, MatCheckboxModule,
-    MatExpansionModule, DragDropModule, MatSortModule
+    MatExpansionModule, DragDropModule, MatSortModule, MatSliderModule,
   ],
   exports: [
     CommonModule,
@@ -45,16 +47,16 @@ export const MY_FORMATS = {
     MatAutocompleteModule, MatTableModule, MatDialogModule, MatTabsModule,
     MatTooltipModule, MatSelectModule, MatPaginatorModule, MatChipsModule,
     MatButtonToggleModule, MatSlideToggleModule, MatBadgeModule, MatCheckboxModule,
-    MatExpansionModule, SelectCheckAllComponent, DragDropModule, MatSortModule
+    MatExpansionModule, DragDropModule, MatSortModule, MatSliderModule,
   ],
   providers: [
     {
       provide: MAT_DATE_FORMATS,
       useValue: MY_FORMATS
     },
-    { provide: LOCALE_ID, useValue: 'en-gb' }
+    { provide: LOCALE_ID, useValue: 'en-us' }
   ],
-  declarations: [SelectCheckAllComponent]
+  declarations: []
 })
 export class CustomMaterialModule {
   static forRoot() {
