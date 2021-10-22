@@ -152,7 +152,7 @@ p .mat-icon {
 }
 
 .mat-slider.mat-slider-horizontal .mat-slider-track-wrapper {
-  height: 12px;
+  height: 10px;
   border-radius: 10px
 }
 
@@ -168,12 +168,13 @@ p .mat-icon {
 .mat-accent .mat-slider-thumb {
   height: 30px;
   width: 30px;
-  background-color: white;
-  border: solid 2px gray;
+  background-color: #3F51B5;
+  border: 0px;
   bottom: -20px;
   right: -20px;
 }
 
 .mat-slider-min-value:not(.mat-slider-thumb-label-showing) .mat-slider-thumb {
-  background-color: white;
+  background-color: #3F51B5;
+  border: 0px;
 }

@@ -33,7 +33,13 @@ export class AuthenticationService {
                     provider: 'Gmail'
                 };
                 this.localStorage.setItem('currentUser', user.uid);
-            } else { this.localStorage.removeItem('currentUser'); }
+                this.localStorage.setItem('currentUserEmail', user.email);
+                this.localStorage.setItem('currentUserName', user.displayName);
+            } else {
+                this.localStorage.removeItem('currentUser');
+                this.localStorage.removeItem('currentUserEmail');
+                this.localStorage.removeItem('currentUserName');
+            }
             this.setCurrentUser(newUser);
         });
     }

@@ -4,7 +4,9 @@ import { AngularFirestore } from '@angular/fire/firestore';
 interface Draw {
   docId: string;
   userId: string;
+  displayName: String;
   canvas: any;
+  shared: Array<string>;
 }
 
 @Injectable({
@@ -12,7 +14,7 @@ interface Draw {
 })
 export class FirestoreService {
 
-  collection: string;
+  private collection: string;
   constructor(
     private firestore: AngularFirestore,
     @Inject('LOCALSTORAGE') private localStorage: Storage
@@ -21,7 +23,12 @@ export class FirestoreService {
   }
 
   public create(canvas) {
-    return this.firestore.collection(this.collection).add({canvas: canvas, userId: this.localStorage.getItem('currentUser')});
+    return this.firestore.collection(this.collection).add({
+      canvas: canvas,
+      userId: this.localStorage.getItem('currentUser'),
+      displayName: this.localStorage.getItem('currentUserName'),
+      shared: []
+    });
   }
 
   public getById(documentId: string) {
@@ -30,6 +37,11 @@ export class FirestoreService {
 
   public get() {
     return this.firestore.collection(this.collection, ref => ref.where('userId', '==', this.localStorage.getItem('currentUser')))
+    .valueChanges({ idField: 'docId'});
+  }
+
+  public sharedWithMe() {
+    return this.firestore.collection(this.collection, ref => ref.where('shared', 'array-contains', this.localStorage.getItem('currentUserEmail')))
     .valueChanges({ idField: 'docId'});
   }
 

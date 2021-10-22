@@ -9,26 +9,6 @@
       </h1>
     </a>
     <span class="navbar-spacer"></span>
-    
-    <div (click)="uploadFile.click()">
-      <mat-icon aria-hidden="false" class="image">image</mat-icon>
-      <input #uploadFile (change)="upload($event)" type="file" accept="image/png, image/gif, image/jpeg" style="display:none"/> 
-    </div>
-    <div (click)="setDrawingMode(false)" [ngClass]="{'fn-active': isDrawingMode }">
-      <mat-icon aria-hidden="false" class="image">open_with</mat-icon>
-    </div>
-    <div (click)="setDrawingMode(true)" [ngClass]="{'fn-active': !isDrawingMode }">
-      <mat-icon aria-hidden="false" class="image">edit</mat-icon>
-    </div>
-    <mat-slider max="50" min="10" [(ngModel)]="width"  (change)="fabricService.lineWeight=width" *ngIf="isDrawingMode"> </mat-slider>
-    <input [(colorPicker)]="color" [style.background]="color" (colorPickerChange)="fabricService.color=color" class="colorPicker" *ngIf="isDrawingMode" readonly>
-    <div (click)="reset()">
-      <mat-icon aria-hidden="false" class="image">delete</mat-icon>
-    </div>
-    <span class="navbar-spacer"></span>
-
-    
-    
     <button mat-button [matMenuTriggerFor]="userMenu">
       <mat-icon>person</mat-icon>
       <span fxShow fxHide.xs>
@@ -36,7 +16,6 @@
       </span>
     </button>
     <mat-menu #userMenu="matMenu" xPosition="before" yPosition="above" [overlapTrigger]="false">
-
       <a mat-menu-item (click)="logout()">
         <mat-icon>exit_to_app</mat-icon>
         <span>Log out</span>
@@ -45,10 +24,6 @@
     </mat-menu>
 
   </mat-toolbar>
-  <div class="container" fxFlex="95%">
-    <mat-progress-bar *ngIf="loading" mode="indeterminate"></mat-progress-bar>
-    <canvas width="1280px" height="860px" class="canvas" id="fabricSurface"></canvas>
-  </div>
-  
+  <router-outlet></router-outlet>
 
 </div>
